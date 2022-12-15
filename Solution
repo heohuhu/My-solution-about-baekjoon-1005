@@ -1,0 +1,53 @@
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <vector>
+using namespace std;
+
+struct Node {
+	vector<int> child;
+	int time, count = 0;
+};
+
+int main() {
+	int testcase;
+	cin >> testcase;
+	while (testcase) {
+		Node node[1006];
+		int n, w, k, dp[1006] = { 0 };
+		queue<int> q;
+		cin >> n >> k;
+
+		for (int i = 1; i <= n; i++)
+			cin >> node[i].time;
+
+		for (int i = 0; i < k; i++) {
+			int a, b;
+			cin >> a >> b;
+			node[a].child.push_back(b);
+			node[b].count++;
+		}
+		
+		cin >> w;
+
+		for (int i = 1; i <= n; i++)
+			if (node[i].count == 0)
+				q.push(i);
+
+		while (!q.empty()) {
+			int a = q.front();
+			q.pop();
+
+			dp[a] += node[a].time;
+			for (int i = 0; i < node[a].child.size(); i++) {
+				dp[node[a].child[i]] = max(dp[a], dp[node[a].child[i]]);
+				if (--node[node[a].child[i]].count == 0)
+					q.push(node[a].child[i]);
+			}
+		}
+
+		cout << dp[w] << endl;
+
+		testcase--;
+	}
+}
